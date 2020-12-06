@@ -8,11 +8,13 @@ import sys
 s = socket.socket()
 print(f"[+] socket succesffuly created")
 
+#Server host
+host = "192.168.0.101" 
 #server port
 port = 8888
 
 #bind the socket
-s.bind(('',port))
+s.bind((host,port))
 print(f"[+] socket binded to " + str(port))
 
 #receive bytes
@@ -29,7 +31,7 @@ print(f"[+] Socket is listening ")
 client_socket, address = s.accept()
 
 #show the sender is connected
-printf("[+] {address} is connected.")
+print(f"[+] {address} is connected.")
 
 #receive file infos
 #receive use client socket
@@ -42,21 +44,21 @@ filename = os.path.basename(filename)
 #convert to integer
 filesize = int(filesize)
 
-#start receive file from socket and write to the file stream
-progress = tqdm.tqdm(range(filesize), f("Receiving {filename}", unit="B", unit_scale = TRUE, unit_divisor = 1024)
-
+# start receiving the file from the socket
+# and writing to the file stream
+progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
 with open(filename, "wb") as f:
-	for _ in progress:
-	#read 1024 bytes from the socket(receive)
-	bytes_read = client.socket.recv(BUFFER_SIZE)
-	if not byte_read:
-	break
-
-	#write file the bytes just recived
-	f.write(bytes_read)
-	#update the progress bar
-	progress.update(len(bytes_read))
-
+    for _ in progress:
+        # read 1024 bytes from the socket (receive)
+        bytes_read = client_socket.recv(BUFFER_SIZE)
+        if not bytes_read:    
+            # nothing is received
+            # file transmitting is done
+            break
+        # write to the file the bytes we just received
+        f.write(bytes_read)
+        # update the progress bar
+        progress.update(len(bytes_read))
 #close teh client socket
 client_socket.close()
 #close the server socket
